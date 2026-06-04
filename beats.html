@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scaryten Dev - Latest Beats</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#fff;font-family:Arial;padding:20px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid #1a1a1a;margin-bottom:40px}
+.logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:bold}
+.logo-box{background:#ff3333;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:24px}
+.logo span:last-child{color:#ff3333}
+h1{text-align:center;font-size:42px;margin:30px 0;font-weight:800}
+h1 span{color:#ff3333}
+.subtitle{text-align:center;color:#888;margin-bottom:40px}
+.filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.filter-btn{background:#1a1a1a;border:none;color:#888;padding:12px 28px;border-radius:25px;cursor:pointer;font-weight:600}
+.filter-btn.active{background:#ff3333;color:#fff}
+.beat-card{background:#111;border:1px solid #222;border-radius:16px;padding:18px;margin:12px auto;max-width:650px;display:flex;align-items:center;gap:16px}
+.play-btn{background:#ff3333;border:none;width:56px;height:56px;border-radius:50%;color:#fff;font-size:20px;cursor:pointer}
+.beat-info{flex:1;min-width:0}
+.beat-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.tag{background:#2a0000;color:#ff5555;padding:4px 10px;border-radius:5px;font-size:12px;font-weight:600}
+.progress{height:4px;background:#222;border-radius:2px;margin:8px 0}
+.progress-bar{height:100%;background:#ff3333;width:0%}
+.meta{color:#666;font-size:13px}
+.price{color:#ff3333;font-size:22px;font-weight:800}
+.cart-btn{background:#1a1a1a;border:none;width:40px;height:40px;border-radius:8px;color:#888;cursor:pointer;font-size:18px}
+audio{display:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-box">S</div>
+    <span>scaryten</span><span>dev</span>
+  </div>
+  <div style="font-size:28px">☰</div>
+</div>
+
+<h1>Latest <span>Beats</span></h1>
+<p class="subtitle">Browse our collection of premium instrumentals. Preview before you buy.</p>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterBeats('ALL', this)">ALL</button>
+  <button class="filter-btn" onclick="filterBeats('HIP-HOP', this)">HIP-HOP</button>
+  <button class="filter-btn" onclick="filterBeats('DRILL', this)">DRILL</button>
+  <button class="filter-btn" onclick="filterBeats('TRAP', this)">TRAP</button>
+</div>
+
+<div id="beats-container"></div>
+
+<script>
+const beats = [
+  {title:"KDM 29 V10", genre:"HIP-HOP", bpm:145, key:"A Minor", time:"3:12", price:49, file:"KDM-29-V10.mp3"}
+];
+
+function displayBeats(filter) {
+  const container = document.getElementById('beats-container');
+  container.innerHTML = '';
+  beats.filter(b => filter === 'ALL' || b.genre === filter).forEach((beat, i) => {
+    container.innerHTML += `
+      <div class="beat-card">
+        <button class="play-btn" onclick="playBeat(${i}, this)">▶</button>
+        <div class="beat-info">
+          <p class="beat-title">${beat.title}</p>
+          <span class="tag">${beat.genre}</span>
+          <div class="progress"><div class="progress-bar" id="progress${i}"></div></div>
+          <p class="meta">${beat.bpm} BPM • ${beat.key} • ${beat.time}</p>
+        </div>
+        <div>
+          <p class="price">$${beat.price}</p>
+          <button class="cart-btn" onclick="buyBeat('${beat.title}')">🛒</button>
+        </div>
+        <audio id="audio${i}" src="${beat.file}"></audio>
+      </div>
+    `;
+  });
+}
+
+let currentAudio = null, currentBtn = null;
+function playBeat(index, btn) {
+  const audio = document.getElementById('audio'+index);
+  const progress = document.getElementById('progress'+index);
+  if(currentAudio && currentAudio !== audio) {currentAudio.pause(); currentBtn.innerHTML = '▶';}
+  currentAudio = audio; currentBtn = btn;
+  if(audio.paused) {audio.play(); btn.innerHTML = '⏸';} else {audio.pause(); btn.innerHTML = '▶';}
+  audio.ontimeupdate = () => progress.style.width = (audio.currentTime / audio.duration * 100) + '%';
+  audio.onended = () => {btn.innerHTML = '▶'; progress.style.width = '0%';};
+}
+function filterBeats(genre, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); displayBeats(genre);
+}
+function buyBeat(title) {
+  window.open(`https://wa.me/263775029597?text=Hi Scaryten! Ndiri kuda beat "${title}"`);
+}
+displayBeats('ALL');
+</script>
+</body>
+  </html>
